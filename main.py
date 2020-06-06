@@ -1,28 +1,12 @@
 #!/usr/bin/env python3
 
-import time, pygame
-from tkinter import *
-from tkinter import filedialog as fd
-# здесь определяются константы, классы и функции
+import time, pygame, copy
+from pencil import *
+from slider import *
+from button import *
+from saveLoadImage import *
 
-class Slider:
-	def __init__(self, pos_x, pos_y, size_x, size_y, color, color_but):
-		self.pos_x = pos_x; self.pos_y = pos_y
-		self.size_x = size_x; self.size_y = size_y
-		self.color = color
-		self.pos_x_but = int(pos_x + size_x / 2)
-		self.pos_y_but = pos_y
-		self.color_but = color_but
-		self.size_x_but = int(size_x / 10)
-		self.size_y_but = size_y
-		self.pos = 127
-	def Collision(self, x, y):
-		if ((x >= self.pos_x and x <= self.pos_x + self.size_x - self.size_x_but) and
-			(y >= self.pos_y and y <= self.pos_y + self.size_y)):
-			self.pos_x_but = x
-			self.pos = (self.pos_x_but - self.pos_x) / (self.size_x - self.size_x_but)
-			return True
-
+# Константы
 WIDTH = 600
 HEIGHT = 400
 
@@ -31,135 +15,162 @@ FPS = 1200
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
-
-BACKGROUND_COLOR = WHITE
-
-# используется
-pencil_use = False #кисть
-eraser_use = False # ластик
-
-#параметры ластика
-eraser_size_x = 4
-eraser_size_y = 4
-
-# параметры кисти
-pencil_size_x = 4
-pencil_size_y = 4
-
-# цвет карандаша
-pencil_color = [127, 127, 127]
-
-# здесь происходит инициация, создание объектов и др.
-
-# слайдеры
-sliders = dict()
-# цвет кисти
-sliders["color_r"] = Slider(5, 20, 80, 15, (255, 0, 0), (0, 0, 255))
-sliders["color_g"] = Slider(5, 40, 80, 15, (0, 255, 0), (255, 0, 0))
-sliders["color_b"] = Slider(5, 60, 80, 15, (0, 0, 255), (255, 0, 0))
-#размер карандаша
-sliders["pencil_size_x"] = Slider(5, 170, 80, 15, (0, 0, 0), (255, 0, 0))
-sliders["pencil_size_y"] = Slider(5, 190, 80, 15, (0, 0, 0), (255, 0, 0))
-#размер ластика
-sliders["eraser_size_x"] = Slider(5, 250, 80, 15, (0, 0, 0), (255, 0, 0))
-sliders["eraser_size_y"] = Slider(5, 270, 80, 15, (0, 0, 0), (255, 0, 0))
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+GRAY = (240, 240, 240)
 
 pygame.init()
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
+# основное окно
+window = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
+
+# Поверхности
+# рисование
+canvas = pygame.Surface((int(WIDTH/1.5), HEIGHT),pygame.SRCALPHA)
+# инструменты
+tools = pygame.Surface((int(WIDTH/6), HEIGHT))
+# отображение других изображений
+screen_save = pygame.Surface((int(WIDTH/6), HEIGHT))
+
+# создание объектов
+pencil = Pencil(10, 10, BLACK)
+pencil_use = False # используется ли карандаш
+pipette_use = False # используется ли карандаш
+
+save_image = [Screenshot(0, 5, int(WIDTH/6), int(HEIGHT/5), (140, 140, 140))]
+save_image.append(Screenshot(0, 5, int(WIDTH/6), int(HEIGHT/5), (140, 140, 140)))
+save_image.append(Screenshot(0, 80, int(WIDTH/6), int(HEIGHT/5), (140, 140, 140)))
+save_image.append(Screenshot(0, 155, int(WIDTH/6), int(HEIGHT/5), (140, 140, 140)))
+save_image.append(Screenshot(0, 230, int(WIDTH/6), int(HEIGHT/5), (140, 140, 140)))
+save_image.append(Screenshot(0, 305, int(WIDTH/6), int(HEIGHT/5), (140, 140, 140)))
+for i in save_image:
+	i.set_image(canvas)
+
+# кнопки
+buttons = dict()
+buttons["Save0"] = Button(10, 15, 15, 15, (150, 150, 150), (120, 120, 120), "S")
+buttons["Load0"] = Button(30, 15, 15, 15, (150, 150, 150), (120, 120, 120), "L")
+buttons["Save1"] = Button(10, 90, 15, 15, (150, 150, 150), (120, 120, 120), "S")
+buttons["Load1"] = Button(30, 90, 15, 15, (150, 150, 150), (120, 120, 120), "L")
+buttons["Save2"] = Button(10, 165, 15, 15, (150, 150, 150), (120, 120, 120), "S")
+buttons["Load2"] = Button(30, 165, 15, 15, (150, 150, 150), (120, 120, 120), "L")
+buttons["Save3"] = Button(10, 240, 15, 15, (150, 150, 150), (120, 120, 120), "S")
+buttons["Load3"] = Button(30, 240, 15, 15, (150, 150, 150), (120, 120, 120), "L")
+buttons["Load4"] = Button(10, 315, 15, 15, (150, 150, 150), (120, 120, 120), "L")
+
+# слайдеры
+sliders = dict()
+sliders["pencil_width"] = Slider(5, 15, 90, 15, BLACK, BLUE)
+sliders["pencil_height"] = Slider(5, 35, 90, 15, BLACK, BLUE)
+
+sliders["pencil_color_red"] = Slider(5, 55, 90, 15, RED, BLUE)
+sliders["pencil_color_green"] = Slider(5, 75, 90, 15, GREEN, BLUE)
+sliders["pencil_color_blue"] = Slider(5, 95, 90, 15, BLUE, BLACK)
+
+# таймер
 clock = pygame.time.Clock()
 
-# если надо до цикла отобразить объекты на экране
+# раскраска поверхностей
+tools.fill(GRAY)
+screen_save.fill(GRAY)
+
+window.fill(WHITE)
+# прозрачность
+canvas.fill
+canvas.set_alpha(255)
+
+# отображение поверхностей в окне
+window.blit(tools, (0, 0))
+window.blit(screen_save, (int(WIDTH-(WIDTH/6)), 0))
+window.blit(canvas, (int(WIDTH/6), 0),special_flags=(pygame.BLEND_RGBA_ADD))
 pygame.display.update()
 
-screen.fill(BACKGROUND_COLOR)
 # главный цикл
 while True:
 
     # задержка
 	clock.tick(FPS)
-	#screen.fill(WHITE)
+
+	# берем координаты мыши
+	mouse_x = pygame.mouse.get_pos()[0]
+	mouse_y = pygame.mouse.get_pos()[1]
+	mouse_but_down = pygame.mouse.get_pressed()
+
+	# закраска поверхностей
+	tools.fill(GRAY)
 
     # цикл обработки событий
 	for i in pygame.event.get():
 		if i.type == pygame.QUIT:
 			exit()
 
-		elif i.type == pygame.KEYDOWN:
+		if i.type == pygame.KEYDOWN:
 			if (i.key == pygame.K_s):
-				rect = pygame.Rect(95, 0, WIDTH-95, HEIGHT)
-				sub = screen.subsurface(rect)
-				file_name = fd.asksaveasfilename(filetypes=(("PNG files", "*.png"),
-                                        ("JPG files", "*.jpg;"),
-                                                ("All files", "*.*") ))
-				pygame.image.save(sub, file_name)
-			elif (i.key == pygame.K_l):
-				file_name = fd.askopenfilename()
-				image_load = pygame.image.load(file_name)
-				screen.blit(image_load, (95, 0, 0, HEIGHT))
-		elif i.type == pygame.MOUSEBUTTONDOWN:
-			if pygame.mouse.get_pressed() == (1, 0, 0):
+				SaveImage(canvas)
+			if (i.key == pygame.K_l):
+				LoadImage(canvas, 0, , 0, 0)
+		if i.type == pygame.MOUSEBUTTONDOWN:
+			if (mouse_x > int(WIDTH/6) and mouse_x < int(WIDTH-(WIDTH/6)) and pygame.mouse.get_pressed() == (1, 0, 0)):
+				save_image[len(save_image)-1].set_image(canvas)
+				pencil.draw(canvas, mouse_x - int(WIDTH/6), mouse_y)
 				pencil_use = True
-			elif pygame.mouse.get_pressed() == (0, 0, 1):
-				eraser_use = True
+			if (mouse_x > int(WIDTH/6) and mouse_x < int(WIDTH-(WIDTH/6)) and pygame.mouse.get_pressed() == (0, 1, 0)):
+				pencil.set_color(window.get_at((mouse_x, mouse_y)))
+				pipette_use = True
+
 		elif i.type == pygame.MOUSEBUTTONUP:
 			pencil_use = False
-			eraser_use = False
+			pipette_use = False
+		if i.type == pygame.MOUSEMOTION:
+			if (pencil_use):
+				pencil.draw(canvas, mouse_x - int(WIDTH/6), mouse_y)
+	
+	# изменение размера карандаша
+	pencil.set_width(sliders.get("pencil_width").move(mouse_x, mouse_y, mouse_but_down) * 40)
+	pencil.set_height(sliders.get("pencil_height").move(mouse_x, mouse_y, mouse_but_down) * 40)
+	# изменение цвета
+	if (pipette_use == False):
+		r = sliders.get("pencil_color_red").move(mouse_x, mouse_y, mouse_but_down) * 255
+		g = sliders.get("pencil_color_green").move(mouse_x, mouse_y, mouse_but_down) * 255
+		b = sliders.get("pencil_color_blue").move(mouse_x, mouse_y, mouse_but_down) * 255
+		pencil.set_color( (r, g, b) )
+	else:
+		sliders.get("pencil_color_red").value = pencil.get_color()[0] / 255
+		sliders.get("pencil_color_green").value = pencil.get_color()[1] / 255
+		sliders.get("pencil_color_blue").value = pencil.get_color()[2] / 255
 
-	screen.fill((225, 225, 245), (0, 0, 95, HEIGHT))
-	if (pencil_use):
-		# изменение цвета
-		if (sliders.get("color_r").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			pencil_color[0] = int(255 * sliders.get("color_r").pos)
-		elif (sliders.get("color_g").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			pencil_color[1] = int(255 * sliders.get("color_g").pos)
-		elif (sliders.get("color_b").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			pencil_color[2] = int(255 * sliders.get("color_b").pos)
+	# сохранение/загрузка картинок в правой панели
+	# координаты относительно tools: mouse_x-(WIDTH/1.2)
 
-		# изменение размера карандаша
-		elif (sliders.get("pencil_size_x").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			pencil_size_x = int(sliders.get("pencil_size_x").pos * 30)
-		elif (sliders.get("pencil_size_y").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			pencil_size_y = int(sliders.get("pencil_size_y").pos * 30)
+	for i in range(0, 4):
+		if (buttons.get("Save"+str(i)).collision(mouse_x-(WIDTH/1.2), mouse_y, mouse_but_down)):
+			save_image[i+1].set_image(canvas)
+		if (buttons.get("Load"+str(i)).collision(mouse_x-(WIDTH/1.2), mouse_y, mouse_but_down)):
+			save_image[i+1].load_image(canvas, 0, 0)
+	if buttons.get("Load4").collision(mouse_x-(WIDTH/1.2), mouse_y, mouse_but_down):
+		save_image[5].load_image(canvas, 0, 0)
 
-		# изменение размера ластика
-		elif (sliders.get("eraser_size_x").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			eraser_size_x = int(sliders.get("eraser_size_x").pos * 30)
-		elif (sliders.get("eraser_size_y").Collision(pygame.mouse.get_pos()[0], 
-				pygame.mouse.get_pos()[1])):
-			eraser_size_y = int(sliders.get("eraser_size_y").pos * 30)
 
-		# раскраска пикселей 
-		screen.fill(pencil_color, ((pygame.mouse.get_pos()[0], 
-					pygame.mouse.get_pos()[1]), 
-					(pencil_size_x, pencil_size_y)))
-	elif (eraser_use):
-		m_x = pygame.mouse.get_pos()[0]
-		m_y = pygame.mouse.get_pos()[1]
-		screen.fill(BACKGROUND_COLOR, ((pygame.mouse.get_pos()[0], 
-					pygame.mouse.get_pos()[1]), (eraser_size_x, eraser_size_y)))
-
-    # --------
-    # изменение объектов и многое др.
-    # --------
-
-	# итоговый цвет
-	pygame.draw.rect(screen, pencil_color, (5, 90, 80, 30))
+	# отрисовка слайдеров	
 	for i in sliders.keys():
 		sl = sliders.get(i)
-		pygame.draw.rect(screen, sl.color, 
-						(sl.pos_x, sl.pos_y, sl.size_x, sl.size_y))
-		pygame.draw.rect(screen, sl.color_but, 
-						(sl.pos_x_but, sl.pos_y_but, sl.size_x_but, sl.size_y_but))
+		sl.blit(tools)
+	# отрисовка кнопок
+	for i in buttons.keys():
+		but = buttons.get(i)
+		but.blit(screen_save)
+	# итоговый размер и цвет кисти
+	pygame.draw.rect(tools, pencil.get_color(), (5, 120, int(pencil.width), int(pencil.height)))
 
-	# размер кисти/ластика визуально
-	pygame.draw.rect(screen, pencil_color, (5, 210, pencil_size_x, pencil_size_y))
-	pygame.draw.rect(screen, BACKGROUND_COLOR, (5, 290, eraser_size_x, eraser_size_y))
+	# отображение поверхностей в окне
+	window.blit(tools, (0, 0))
+	window.blit(screen_save, (int(WIDTH-(WIDTH/6)), 0))
+	window.blit(canvas, (int(WIDTH/6), 0))
+
+	for i in save_image:
+		i.blit(screen_save)
+
     # обновление экрана
-	pygame.display.update()
+	pygame.display.update((0, 0, int(WIDTH/6), HEIGHT))
+	pygame.display.update((WIDTH - int(WIDTH/6), 0, int(WIDTH/6), HEIGHT))
+	pygame.display.update((int(WIDTH/6), 0, int(WIDTH-(WIDTH/3)), HEIGHT))

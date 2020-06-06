@@ -13,14 +13,14 @@ Arch Linux:
 
 *Control*
 
-Draw: left mouse button;
-Erase: right mouse button;
-Color: left slider RGB;
+Draw: left mouse button
+Erase: right mouse button
+Color: left slider RGB
 
-Size pencil/eraser: left down slider;
+Size pencil/eraser: left down slider
 
-Save image: Key S;
-Load image: Key L.
+Save image: Key S
+Load image: Key L
 
 
 Russian language
@@ -38,12 +38,12 @@ Arch Linux:
 
 *Управление*
 
-Рисовать: левая кнопка мыши;
-Ластик: правая кнопка мыши;
+Рисовать: левая кнопка мыши
+Ластик: правая кнопка мыши
 Изменять цвет в соотвествии с политрой R - RED, G - GREEN, B - BLUE, 
-двигая слайдеры слева;
+двигая слайдеры слева
 
-Изменять размер карандаша/ластика: слайдеры слева внизу;
+Изменять размер карандаша/ластика: слайдеры слева внизу
 
-Сохранение изображения: Клавиша S;
-Загрузка изображения: Клавиша L.
+Сохранение изображения: Клавиша S
+Загрузка изображения: Клавиша L
