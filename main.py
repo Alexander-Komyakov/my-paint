@@ -135,10 +135,6 @@ while True:
 		b = sliders.get("pencil_color_blue").move(mouse_x, mouse_y, mouse_but_down) * 255
 		pencil.set_color( (r, g, b) )
 	else:
-		#sliders.get("pencil_color_red").value = pencil.get_color()[0] / 255
-		#sliders.get("pencil_color_green").value = pencil.get_color()[1] / 255
-		#sliders.get("pencil_color_blue").value = pencil.get_color()[2] / 255
-		
 		sliders.get("pencil_color_red").move_absolute(pencil.get_color()[0] / 255)
 		sliders.get("pencil_color_green").move_absolute(pencil.get_color()[1] / 255)
 		sliders.get("pencil_color_blue").move_absolute(pencil.get_color()[2] / 255)
