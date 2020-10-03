@@ -25,6 +25,12 @@ class Slider:
 			self.x_button = mouse_x
 			self.value = (self.x_button - self.x) / (self.width - self.width_button)
 		return self.value
+
+	def move_absolute(self, value):
+		self.value = value
+		self.x_button = self.value*(self.width-self.width_button)+self.x
+
+		return self.value
 	def blit(self, screen):
 		pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
 		pygame.draw.rect(screen, self.color_button, 

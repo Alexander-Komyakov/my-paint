@@ -9,13 +9,14 @@ def SaveImage(image):
 												("All files", "*,*") ))
 	if image_name != "":
 		pygame.image.save(image, image_name)
-def LoadImage(screen, x, y):
+def LoadImage(screen, x, y, width, height):
 	image_name = fd.askopenfilename(filetypes=(("PNG files", "*.png"),
 												("JPEG files", "*.jpg"),
 												("All files", "*,*") ))
 	if (image_name != ()):
 		if (os.path.exists(image_name)):
 			image = pygame.image.load(image_name)
+			image = pygame.transform.scale(image, (int(width), int(height)))
 			screen.blit(image, (x, y))
 
 

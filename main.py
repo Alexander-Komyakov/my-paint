@@ -108,7 +108,7 @@ while True:
 			if (i.key == pygame.K_s):
 				SaveImage(canvas)
 			if (i.key == pygame.K_l):
-				LoadImage(canvas, 0, 0)
+				LoadImage(canvas, 0, 0, WIDTH-WIDTH/3, HEIGHT)
 		if i.type == pygame.MOUSEBUTTONDOWN:
 			if (mouse_x > int(WIDTH/6) and mouse_x < int(WIDTH-(WIDTH/6)) and pygame.mouse.get_pressed() == (1, 0, 0)):
 				save_image[len(save_image)-1].set_image(canvas)
@@ -135,9 +135,13 @@ while True:
 		b = sliders.get("pencil_color_blue").move(mouse_x, mouse_y, mouse_but_down) * 255
 		pencil.set_color( (r, g, b) )
 	else:
-		sliders.get("pencil_color_red").value = pencil.get_color()[0] / 255
-		sliders.get("pencil_color_green").value = pencil.get_color()[1] / 255
-		sliders.get("pencil_color_blue").value = pencil.get_color()[2] / 255
+		#sliders.get("pencil_color_red").value = pencil.get_color()[0] / 255
+		#sliders.get("pencil_color_green").value = pencil.get_color()[1] / 255
+		#sliders.get("pencil_color_blue").value = pencil.get_color()[2] / 255
+		
+		sliders.get("pencil_color_red").move_absolute(pencil.get_color()[0] / 255)
+		sliders.get("pencil_color_green").move_absolute(pencil.get_color()[1] / 255)
+		sliders.get("pencil_color_blue").move_absolute(pencil.get_color()[2] / 255)
 
 	# сохранение/загрузка картинок в правой панели
 	# координаты относительно tools: mouse_x-(WIDTH/1.2)
