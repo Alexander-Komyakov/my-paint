@@ -6,12 +6,10 @@ This project use Python3 and Pygame
 
 
 Ubuntu Linux:
-*apt-get install python python-pygame*;
-*apt-get install python-tk*
+*apt-get install python python-pygame python-tk*;
 
 Arch Linux:
-*pacman -S python python-pygame*;
-*pacman -S python tk*
+*pacman -S python python-pygame tk*;
 
 *Control*
 
@@ -33,12 +31,10 @@ Russian language
 
 
 Ubuntu Linux:
-*apt-get install python python-pygame*;
-*apt-get install python-tk*
+*apt-get install python python-pygame python-tk*;
 
 Arch Linux:
-*pacman -S python python-pygame*;
-*pacman -S python tk*
+*pacman -S python python-pygame tk*;
 
 *Управление*
 

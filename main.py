@@ -108,7 +108,7 @@ while True:
 			if (i.key == pygame.K_s):
 				SaveImage(canvas)
 			if (i.key == pygame.K_l):
-				LoadImage(canvas, 0, , 0, 0)
+				LoadImage(canvas, 0, 0)
 		if i.type == pygame.MOUSEBUTTONDOWN:
 			if (mouse_x > int(WIDTH/6) and mouse_x < int(WIDTH-(WIDTH/6)) and pygame.mouse.get_pressed() == (1, 0, 0)):
 				save_image[len(save_image)-1].set_image(canvas)
