@@ -1,6 +1,6 @@
-English
--------------------------------------------------------------------
-*Install*
+# MyPaint
+
+## *Install*
 
 This project use Python3 and Pygame
 
@@ -13,16 +13,23 @@ Arch Linux:
 
 `# pacman -S python python-pygame tk`
 
-*Control*
+## *Control*
 
 Draw: left mouse button
+
 Get Color: center mouse button
+
 Color: left slider RGB
 
 Size pencil: left slider
 
 Save image: Key S
+
 Load image: Key L
+
+## Screenshot
+
+<img src="./screenshot.jpg" width="600">
 
 # Created by Alexander Komyakov
 For any kind of help, support, suggetion and request ask in me
